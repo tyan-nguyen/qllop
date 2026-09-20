@@ -6,7 +6,7 @@ const path = require('path');
 require('dotenv').config();
 
 const apiRouter = require('./routes/api');
-const { initDatabase } = require('./db/sqlite');
+const { initDatabase, dbPath } = require('./db/sqlite');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -92,6 +92,7 @@ app.listen(PORT, () => {
   console.log(`===================================================`);
   console.log(`Backend Server đang chạy tại: http://localhost:${PORT}`);
   console.log(`API Health Check: http://localhost:${PORT}/api/health`);
+  console.log(`CSDL SQLite lưu tại: ${dbPath}`);
   console.log(`Bảo mật: Helmet & Rate Limiter đã được kích hoạt`);
   console.log(`===================================================`);
 });

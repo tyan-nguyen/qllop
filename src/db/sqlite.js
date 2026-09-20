@@ -1,8 +1,21 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const fs = require('fs');
 const bcrypt = require('bcryptjs');
+require('dotenv').config();
 
-const dbPath = path.resolve(__dirname, '../../database.sqlite');
+// Hỗ trợ cấu hình đường dẫn SQLite từ biến môi trường DB_PATH hoặc SQLITE_DB_PATH
+const rawDbPath = process.env.DB_PATH || process.env.SQLITE_DB_PATH;
+const dbPath = rawDbPath
+  ? (path.isAbsolute(rawDbPath) ? rawDbPath : path.resolve(process.cwd(), rawDbPath))
+  : path.resolve(__dirname, '../../database.sqlite');
+
+// Tự động tạo thư mục chứa file CSDL nếu chưa tồn tại
+const dbDir = path.dirname(dbPath);
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+}
+
 const db = new sqlite3.Database(dbPath);
 
 function runQuery(sql, params = []) {
@@ -472,6 +485,7 @@ initDatabase();
 
 module.exports = {
   db,
+  dbPath,
   runQuery,
   getQuery,
   allQuery,
